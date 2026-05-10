@@ -15,6 +15,15 @@ TEST(SerilizerTest, Enum) {
   auto in = Answer::NONE;
   Serializer::Deserialize(in, archive);
 
+  ASSERT_EQ(archive.GetWritePosition(), sizeof(Answer));
+  ASSERT_EQ(archive.GetReadPosition(), sizeof(Answer));
+
+  Serializer::Serialize(out, archive);
+  Serializer::Deserialize(in, archive);
+
+  ASSERT_EQ(archive.GetWritePosition(), sizeof(Answer) * 2);
+  ASSERT_EQ(archive.GetReadPosition(), sizeof(Answer) * 2);
+
   ASSERT_TRUE(out == in);
 }
 
@@ -27,6 +36,9 @@ TEST(SerilizerTest, String) {
   std::string in;
   Serializer::Deserialize(in, archive);
 
+  ASSERT_EQ(archive.GetWritePosition(), out.size() + sizeof(std::size_t));
+  ASSERT_EQ(archive.GetReadPosition(), out.size() + sizeof(std::size_t));
+
   ASSERT_TRUE(out == in);
 }
 
@@ -38,6 +50,9 @@ TEST(SerilizerTest, Wstring) {
 
   std::wstring in;
   Serializer::Deserialize(in, archive);
+
+  ASSERT_EQ(archive.GetWritePosition(), out.size() * 2 + sizeof(std::size_t));
+  ASSERT_EQ(archive.GetReadPosition(), out.size() * 2 + sizeof(std::size_t));
 
   ASSERT_TRUE(out == in);
 }
