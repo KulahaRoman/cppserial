@@ -9,8 +9,10 @@ namespace CppSerial {
 
 class Serializable {
  public:
-  virtual void Serialize(BinaryArchive& archive, Context& context) const = 0;
-  virtual void Deserialize(BinaryArchive& archive, Context& context) = 0;
+  virtual void Serialize(BinaryArchive& archive,
+                         Context& context = Context()) const = 0;
+  virtual void Deserialize(BinaryArchive& archive,
+                           Context& context = Context()) = 0;
 
   virtual ~Serializable() = default;
 };
