@@ -27,15 +27,9 @@ namespace CppSerial {
 
 class Serializer {
  public:
-  template <class T>
-  static void Serialize(const T value, BinaryArchive& archive) {
-    Context context;
-    Serialize(value, archive, context);
-  }
-
   template <class T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
   static void Serialize(const T value, BinaryArchive& archive,
-                        const Context& context) {
+                        const Context& context = Context()) {
     try {
       T temp{};
 
@@ -56,7 +50,7 @@ class Serializer {
 
   template <class T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
   static void Serialize(const T value, BinaryArchive& archive,
-                        const Context& context) {
+                        const Context& context = Context()) {
     try {
       Serialize(static_cast<std::underlying_type_t<T>>(value), archive,
                 context);
@@ -67,7 +61,7 @@ class Serializer {
   }
 
   static void Serialize(const std::string& str, BinaryArchive& archive,
-                        const Context& context) {
+                        const Context& context = Context()) {
     try {
       auto strSizeInBytes = static_cast<uint64_t>(str.size());
 
@@ -82,7 +76,7 @@ class Serializer {
   }
 
   static void Serialize(const std::wstring& wstr, BinaryArchive& archive,
-                        const Context& context) {
+                        const Context& context = Context()) {
     try {
       auto strSizeInBytes =
           static_cast<uint64_t>(wstr.size() * sizeof(wchar_t));
@@ -99,7 +93,7 @@ class Serializer {
 
   template <class T1, class T2>
   static void Serialize(const std::pair<T1, T2>& pair, BinaryArchive& archive,
-                        Context& context) {
+                        Context& context = Context()) {
     try {
       Serialize(pair.first, archive, context);
       Serialize(pair.second, archive, context);
@@ -111,7 +105,7 @@ class Serializer {
 
   template <class T, std::size_t N>
   static void Serialize(const std::array<T, N>& array, BinaryArchive& archive,
-                        Context& context) {
+                        Context& context = Context()) {
     try {
       for (const auto& value : array) {
         Serialize(value, archive, context);
@@ -124,7 +118,7 @@ class Serializer {
 
   template <class K, class V, class Compare, class Allocator>
   static void Serialize(const std::map<K, V, Compare, Allocator>& map,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(map.size()), archive, context);
 
@@ -140,7 +134,7 @@ class Serializer {
 
   template <class K, class V, class Compare, class Allocator>
   static void Serialize(const std::multimap<K, V, Compare, Allocator>& multimap,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(multimap.size()), archive, context);
 
@@ -157,7 +151,7 @@ class Serializer {
   template <class K, class V, class Hash, class KeyEqual, class Allocator>
   static void Serialize(
       const std::unordered_map<K, V, Hash, KeyEqual, Allocator>& umap,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(umap.size()), archive, context);
 
@@ -174,7 +168,7 @@ class Serializer {
   template <class K, class V, class Hash, class KeyEqual, class Allocator>
   static void Serialize(
       const std::unordered_multimap<K, V, Hash, KeyEqual, Allocator>& umultimap,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(umultimap.size()), archive, context);
 
@@ -191,7 +185,7 @@ class Serializer {
 
   template <class T, class Compare, class Allocator>
   static void Serialize(const std::set<T, Compare, Allocator>& set,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(set.size()), archive, context);
 
@@ -206,7 +200,7 @@ class Serializer {
 
   template <class T, class Compare, class Allocator>
   static void Serialize(const std::multiset<T, Compare, Allocator>& multiset,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(multiset.size()), archive, context);
 
@@ -222,7 +216,7 @@ class Serializer {
   template <class T, class Hash, class KeyEqual, class Allocator>
   static void Serialize(
       const std::unordered_set<T, Hash, KeyEqual, Allocator>& uset,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(uset.size()), archive, context);
 
@@ -238,7 +232,7 @@ class Serializer {
   template <class T, class Hash, class KeyEqual, class Allocator>
   static void Serialize(
       const std::unordered_multiset<T, Hash, KeyEqual, Allocator>& umultiset,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(umultiset.size()), archive, context);
 
@@ -254,7 +248,7 @@ class Serializer {
 
   template <class T, class Container>
   static void Serialize(const std::stack<T, Container>& stack,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(stack.size()), archive, context);
 
@@ -272,7 +266,7 @@ class Serializer {
 
   template <class T, class Container>
   static void Serialize(const std::queue<T, Container>& queue,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(queue.size()), archive, context);
 
@@ -291,7 +285,7 @@ class Serializer {
   template <class T, class Container, class Compare>
   static void Serialize(
       const std::priority_queue<T, Container, Compare>& pqueue,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(pqueue.size()), archive, context);
 
@@ -309,7 +303,7 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Serialize(const std::deque<T, Allocator>& deque,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(deque.size()), archive, context);
 
@@ -324,7 +318,7 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Serialize(const std::list<T, Allocator>& list,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(list.size()), archive, context);
 
@@ -339,7 +333,7 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Serialize(const std::forward_list<T, Allocator>& flist,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       auto initialArchivePosition = archive.GetWritePosition();
 
@@ -365,7 +359,7 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Serialize(const std::vector<T, Allocator>& vector,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     try {
       Serialize(static_cast<uint64_t>(vector.size()), archive, context);
 
@@ -380,7 +374,7 @@ class Serializer {
 
   template <class T, class Deleter>
   static void Serialize(const std::unique_ptr<T, Deleter>& pointer,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     auto pointerState = pointer ? PointerState::VALID : PointerState::INVALID;
     Serialize(pointerState, archive, context);
 
@@ -391,7 +385,7 @@ class Serializer {
 
   template <class T>
   static void Serialize(const std::shared_ptr<T>& pointer,
-                        BinaryArchive& archive, Context& context) {
+                        BinaryArchive& archive, Context& context = Context()) {
     auto pointerState = pointer ? PointerState::VALID : PointerState::INVALID;
     Serialize(pointerState, archive, context);
 
@@ -413,7 +407,7 @@ class Serializer {
 
   template <class T>
   static void Serialize(const std::weak_ptr<T>& pointer, BinaryArchive& archive,
-                        Context& context) {
+                        Context& context = Context()) {
     auto lockedSharedPointer = pointer.lock();
     if (lockedSharedPointer) {
       Serialize(lockedSharedPointer, archive, context);
@@ -421,19 +415,13 @@ class Serializer {
   }
 
   static void Serialize(const Serializable& object, BinaryArchive& archive,
-                        Context& context) {
+                        Context& context = Context()) {
     object.Serialize(archive, context);
-  }
-
-  template <class T>
-  static void Deserialize(T& value, BinaryArchive& archive) {
-    Context context;
-    Deserialize(value, archive, context);
   }
 
   template <class T, std::enable_if_t<std::is_integral_v<T>, int> = 0>
   static void Deserialize(T& value, BinaryArchive& archive,
-                          const Context& context) {
+                          const Context& context = Context()) {
     try {
       T temp{};
 
@@ -453,7 +441,7 @@ class Serializer {
 
   template <class T, std::enable_if_t<std::is_enum_v<T>, int> = 0>
   static void Deserialize(T& value, BinaryArchive& archive,
-                          const Context& context) {
+                          const Context& context = Context()) {
     try {
       Deserialize(reinterpret_cast<std::underlying_type_t<T>&>(value), archive,
                   context);
@@ -464,7 +452,7 @@ class Serializer {
   }
 
   static void Deserialize(std::string& str, BinaryArchive& archive,
-                          const Context& context) {
+                          const Context& context = Context()) {
     try {
       auto strSizeInBytes = 0ull;
 
@@ -481,7 +469,7 @@ class Serializer {
   }
 
   static void Deserialize(std::wstring& wstr, BinaryArchive& archive,
-                          const Context& context) {
+                          const Context& context = Context()) {
     try {
       auto strSizeInBytes = 0ull;
 
@@ -499,7 +487,7 @@ class Serializer {
 
   template <class T1, class T2>
   static void Deserialize(std::pair<T1, T2>& pair, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     try {
       T1&& first{};
       T2&& second{};
@@ -517,7 +505,7 @@ class Serializer {
 
   template <class T, std::size_t N>
   static void Deserialize(std::array<T, N>& array, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     try {
       for (auto i = 0ull; i < N; i++) {
         T&& value{};
@@ -532,7 +520,8 @@ class Serializer {
 
   template <class K, class V, class Compare, class Allocator>
   static void Deserialize(std::map<K, V, Compare, Allocator>& map,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto mapSize = 0ull;
 
     try {
@@ -555,7 +544,8 @@ class Serializer {
 
   template <class K, class V, class Compare, class Allocator>
   static void Deserialize(std::multimap<K, V, Compare, Allocator>& multimap,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto mapSize = 0ull;
 
     try {
@@ -579,7 +569,7 @@ class Serializer {
   template <class K, class V, class Hash, class KeyEqual, class Allocator>
   static void Deserialize(
       std::unordered_map<K, V, Hash, KeyEqual, Allocator>& umap,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     auto mapSize = 0ull;
 
     try {
@@ -604,7 +594,7 @@ class Serializer {
   template <class K, class V, class Hash, class KeyEqual, class Allocator>
   static void Deserialize(
       std::unordered_multimap<K, V, Hash, KeyEqual, Allocator>& umultimap,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     auto mapSize = 0ull;
 
     try {
@@ -628,7 +618,8 @@ class Serializer {
 
   template <class T, class Compare, class Allocator>
   static void Deserialize(std::set<T, Compare, Allocator>& set,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto setSize = 0ull;
 
     try {
@@ -649,7 +640,8 @@ class Serializer {
 
   template <class T, class Compare, class Allocator>
   static void Deserialize(std::multiset<T, Compare, Allocator>& multiset,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto setSize = 0ull;
 
     try {
@@ -671,7 +663,7 @@ class Serializer {
   template <class T, class Hash, class KeyEqual, class Allocator>
   static void Deserialize(
       std::unordered_set<T, Hash, KeyEqual, Allocator>& uset,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     auto setSize = 0ull;
 
     try {
@@ -693,7 +685,7 @@ class Serializer {
   template <class T, class Hash, class KeyEqual, class Allocator>
   static void Deserialize(
       std::unordered_multiset<T, Hash, KeyEqual, Allocator>& umultiset,
-      BinaryArchive& archive, Context& context) {
+      BinaryArchive& archive, Context& context = Context()) {
     auto setSize = 0ull;
 
     try {
@@ -715,7 +707,8 @@ class Serializer {
 
   template <class T, class Container>
   static void Deserialize(std::stack<T, Container>& stack,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto stackSize = 0ull;
 
     std::stack<T> helper;
@@ -743,7 +736,8 @@ class Serializer {
 
   template <class T, class Container>
   static void Deserialize(std::queue<T, Container>& queue,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto queueSize = 0ull;
 
     try {
@@ -764,7 +758,8 @@ class Serializer {
 
   template <class T, class Container, class Compare>
   static void Deserialize(std::priority_queue<T, Container, Compare>& pqueue,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto pqueueSize = 0ull;
 
     try {
@@ -786,7 +781,8 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Deserialize(std::deque<T, Allocator>& deque,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto dequeSize = 0ull;
 
     try {
@@ -807,7 +803,7 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Deserialize(std::list<T, Allocator>& list, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     auto listSize = 0ull;
 
     try {
@@ -828,7 +824,8 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Deserialize(std::forward_list<T, Allocator>& flist,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto listSize = 0ull;
 
     try {
@@ -852,7 +849,8 @@ class Serializer {
 
   template <class T, class Allocator>
   static void Deserialize(std::vector<T, Allocator>& vector,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto vectorSize = 0ull;
 
     try {
@@ -873,7 +871,8 @@ class Serializer {
 
   template <class T, class Deleter>
   static void Deserialize(std::unique_ptr<T, Deleter>& pointer,
-                          BinaryArchive& archive, Context& context) {
+                          BinaryArchive& archive,
+                          Context& context = Context()) {
     auto pointerState = PointerState::NONE;
     Deserialize(pointerState, archive, context);
 
@@ -885,7 +884,7 @@ class Serializer {
 
   template <class T>
   static void Deserialize(std::shared_ptr<T>& pointer, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     auto pointerState = PointerState::NONE;
     Deserialize(pointerState, archive, context);
 
@@ -910,7 +909,7 @@ class Serializer {
 
   template <class T>
   static void Deserialize(std::weak_ptr<T>& pointer, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     auto lockedSharedPointer = pointer.lock();
     Deserialize(lockedSharedPointer, archive, context);
 
@@ -918,7 +917,7 @@ class Serializer {
   }
 
   static void Deserialize(Serializable& object, BinaryArchive& archive,
-                          Context& context) {
+                          Context& context = Context()) {
     object.Deserialize(archive, context);
   }
 

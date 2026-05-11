@@ -342,6 +342,18 @@ TEST(SerilizerTest, Vector) {
   ASSERT_TRUE(out == in);
 }
 
+TEST(SerializerTest, SharedPtr) {
+  std::shared_ptr<int> out = std::make_shared<int>(5);
+
+  BinaryArchive archive;
+  Serializer::Serialize(out, archive);
+
+  std::shared_ptr<int> in;
+  Serializer::Deserialize(in, archive);
+
+  ASSERT_TRUE(*out == *in);
+}
+
 //        Objects hierarchy
 //
 //    Person<----Room---->Person
